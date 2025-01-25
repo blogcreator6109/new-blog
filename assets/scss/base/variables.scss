@@ -1,0 +1,31 @@
+$header-height: 30px;
+
+// Light Theme Colors
+$light-colors: (
+  on-surface-100: #333,
+  surface-100: #ccc,
+);
+
+// Dark Theme Colors
+$dark-colors: (
+  on-surface-100: #fff,
+  surface-100: #333,
+);
+
+// Theme Mixin
+@mixin themed() {
+  @each $key, $value in $light-colors {
+    --#{$key}: #{$value};
+  }
+
+  .dark & {
+    @each $key, $value in $dark-colors {
+      --#{$key}: #{$value};
+    }
+  }
+}
+
+body {
+  @include themed();
+  color: var(--on-surface-100);
+}
