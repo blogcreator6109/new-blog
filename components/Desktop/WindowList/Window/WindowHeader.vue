@@ -6,6 +6,7 @@
       paddingLeft: `${headerHeight / 3}px`,
     }"
     @mousedown="(e) => $emit('dragStart', e)"
+    @dblclick="$emit('maximize')"
   >
     <div class="left">
       <div class="btn" @click="$emit('close')">
@@ -19,7 +20,7 @@
           alt="minimize-active"
         />
       </div>
-      <div class="btn" @click="$emit('maximize')">
+      <div class="btn" @click="$emit('full')">
         <img src="images/window/mac-max-btn.webp" alt="maximize" />
         <img
           src="images/window/mac-max-btn_active.webp"

@@ -1,5 +1,12 @@
 <template>
-  <div class="window" @mousedown="focus">
+  <div
+    class="window"
+    @mousedown="focus"
+    :class="{ maximizing: isMaximizing }"
+    :style="{
+      transition: isMaximizing ? `all ${maximizingTime}s ease` : 'none',
+    }"
+  >
     <ResizeObserver
       @resize-hover="(direction) => $emit('resizeHover', direction)"
       @resize-start="
@@ -13,6 +20,7 @@
       @close="close"
       @minimize="minimize"
       @maximize="maximize"
+      @full="full"
     />
 
     <component :is="comp" :headerHeight="headerHeight" />
@@ -32,6 +40,10 @@ const props = defineProps<{
   component: string;
   headerHeight: number;
 }>();
+
+const isMaximizing = ref(false);
+
+const maximizingTime = ref(0.5);
 
 const emit = defineEmits([
   "focus",
@@ -68,7 +80,21 @@ const minimize = () => {
 };
 
 const maximize = () => {
-  // windowStore.maximizeWindow(props.id);
+  if (!isMaximizing.value) {
+    windowStore.maximizeWindow(props.id);
+    isMaximizing.value = true;
+    setTimeout(() => {
+      isMaximizing.value = false;
+    }, maximizingTime.value * 1000);
+  }
+};
+
+const full = () => {
+  windowStore.fullWindow(props.id);
+  isMaximizing.value = true;
+  setTimeout(() => {
+    isMaximizing.value = false;
+  }, maximizingTime.value * 1000);
 };
 </script>
 

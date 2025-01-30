@@ -1,3 +1,12 @@
+export const getDockRight = (): number => {
+  const dock = document.querySelector(".dock");
+  if (dock) {
+    const rect = dock.getBoundingClientRect();
+    return rect.right;
+  }
+  return 0;
+};
+
 export const getHeaderHeight = (): number => {
   return parseInt(
     getComputedStyle(document.documentElement).getPropertyValue(

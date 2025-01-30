@@ -4,6 +4,7 @@
     :style="{ width: `${BASE_WIDTH}px` }"
     :class="{
       disabled: windowStore.isDragging || windowStore.isResizing,
+      fullscreen: windowStore.isFullscreen(),
     }"
     @mousemove="onMouseMove"
     @mouseleave="onMouseLeave"
@@ -99,7 +100,6 @@ const updateWidths = (targetWidths: number[]): void => {
  */
 const onMouseMove = (e: MouseEvent): void => {
   if (!dockRef.value) return;
-  if (windowStore.isResizing || windowStore.isDragging) return;
 
   const dock = e.currentTarget as HTMLElement;
   const dockRect = dock.getBoundingClientRect();
@@ -133,7 +133,7 @@ const onMouseLeave = (): void => {
   flex-direction: column;
   position: fixed;
   top: 50%;
-  left: 1rem;
+  left: 0;
   box-sizing: content-box;
   transform: translateY(-50%);
   z-index: 100000;
@@ -141,8 +141,17 @@ const onMouseLeave = (): void => {
   box-shadow: 1px 1px 4px #888;
   border-radius: 1.4rem;
   padding: 1.2rem 0.6rem;
-  cursor: default;
-  transition: background-color 0.3s ease;
+  margin-left: 1rem;
+  transition: all 0.3s ease;
+
+  &.disabled {
+    pointer-events: none;
+  }
+
+  &.fullscreen {
+    transform: translate(-100%, -50%);
+    margin-left: -2px;
+  }
 
   .dock-item {
     display: flex;
@@ -170,11 +179,6 @@ const onMouseLeave = (): void => {
       box-shadow: 0 0 1px 1px var(--on-surface-100);
       color: var(--on-surface-100);
       white-space: nowrap;
-    }
-
-    &.disabled {
-      cursor: none;
-      pointer-events: none;
     }
   }
 }
