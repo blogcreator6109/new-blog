@@ -1,18 +1,15 @@
 <template>
   <div class="desktop-container">
     <SiteHeader />
-    <button @click="change">
-      {{ colorMode.value === "dark" ? "Dark" : "light" }}
-    </button>
+    <Dock />
+    <WindowList />
   </div>
 </template>
 
 <script setup lang="ts">
 import SiteHeader from "./Desktop/SiteHeader.vue";
-const colorMode = useColorMode();
-const change = () => {
-  colorMode.preference = colorMode.value === "dark" ? "light" : "dark";
-};
+import Dock from "./Desktop/Dock.vue";
+import WindowList from "./Desktop/WindowList.vue";
 </script>
 
 <style lang="scss"></style>

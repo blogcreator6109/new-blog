@@ -1,9 +1,13 @@
 <template>
   <header class="site-header">
     <div class="site-header__left">
-      <div class="site-header__logo"></div>
+      <div class="logo">
+        <Logo />
+      </div>
+      <div class="title">Blog Creator</div>
     </div>
     <div class="site-header__right">
+      <ThemeButton />
       <Clock />
     </div>
   </header>
@@ -11,21 +15,48 @@
 
 <script setup>
 import Clock from "./SiteHeader/Clock.vue";
+import ThemeButton from "./SiteHeader/ThemeButton.vue";
+import Logo from "@/assets/images/logo.svg?component";
 </script>
 
 <style lang="scss">
 .site-header {
-  background-color: var(--surface-100);
+  background-color: var(--header-bg);
   height: $header-height;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 2rem;
-  font-size: 1.6rem;
+  padding: 0.8rem 2rem;
+  font-size: 1.4rem;
+  transition: background-color 0.3s ease;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    height: 100%;
+
+    .logo {
+      height: 80%;
+      svg {
+        height: 100%;
+        .path {
+          fill: var(--text-color-100);
+          transition: fill 0.3s ease;
+        }
+      }
+    }
+
+    .title {
+      font-weight: 700;
+      margin-left: 1.8rem;
+    }
+  }
 
   &__right {
     display: flex;
     align-items: center;
+    height: 100%;
+    column-gap: 1.5rem;
   }
 }
 </style>

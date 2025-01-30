@@ -1,0 +1,181 @@
+<template>
+  <nav
+    class="dock"
+    :style="{ width: `${BASE_WIDTH}px` }"
+    :class="{
+      disabled: windowStore.isDragging || windowStore.isResizing,
+    }"
+    @mousemove="onMouseMove"
+    @mouseleave="onMouseLeave"
+  >
+    <button
+      class="dock-item"
+      v-for="(name, i) in docNames"
+      :key="i"
+      @click="openApp(name)"
+    >
+      <img
+        :style="{ minWidth: widths[i] + 'px' }"
+        :src="`/images/dock/${name}.webp`"
+        ref="dockRef"
+        :alt="name"
+        width="60"
+      />
+
+      <p>{{ name }}</p>
+    </button>
+  </nav>
+</template>
+
+<script setup lang="ts">
+import { useWindowStore } from "@/stores/windowStore";
+
+const windowStore = useWindowStore();
+
+const openApp = (name: string) => {
+  const appName = name.replaceAll(" ", "");
+
+  windowStore.openWindow(name, appName);
+};
+
+// 앱 아이콘 목록 (Window 폴더에서 가져오기)
+const files = import.meta.glob(
+  "@/components/Desktop/WindowList/WindowItems/*.vue"
+);
+const docNames = Object.keys(files).map((key) => {
+  const fileName = key.split("/").pop();
+  if (!fileName) {
+    console.error("파일 이름을 찾을 수 없습니다.", key);
+    return "";
+  }
+
+  return fileName
+    .replace(".vue", "")
+    .split(/(?=[A-Z])/)
+    .join(" ");
+});
+
+// 독 설정 상수
+const BASE_WIDTH = 40; // 기본 너비
+const MAX_WIDTH = BASE_WIDTH * 2; // 최대 너비
+const ANIMATION_SPEED = 0.07; // 애니메이션 속도
+const MAX_DISTANCE = 250; // 마우스 영향을 받는 최대 거리
+
+const dockRef = ref<HTMLImageElement[]>([]);
+const widths = ref<number[]>(Array(docNames.length).fill(BASE_WIDTH));
+let animationFrameId: number | null = null;
+
+/**
+ * 아이콘 크기를 목표 크기로 부드럽게 변경하는 함수
+ */
+const updateWidths = (targetWidths: number[]): void => {
+  if (animationFrameId) {
+    window.cancelAnimationFrame(animationFrameId);
+  }
+
+  const step = (MAX_WIDTH - BASE_WIDTH) * ANIMATION_SPEED;
+  let needsUpdate = false;
+
+  widths.value = widths.value.map((currentWidth, index) => {
+    const targetWidth = targetWidths[index];
+    if (currentWidth === targetWidth) return currentWidth;
+
+    needsUpdate = true;
+    if (targetWidth < currentWidth) {
+      return Math.max(currentWidth - step, targetWidth);
+    }
+    return Math.min(currentWidth + step, targetWidth);
+  });
+
+  if (needsUpdate) {
+    animationFrameId = window.requestAnimationFrame(() =>
+      updateWidths(targetWidths)
+    );
+  }
+};
+
+/**
+ * 마우스 이동에 따른 아이콘 크기 계산
+ */
+const onMouseMove = (e: MouseEvent): void => {
+  if (!dockRef.value) return;
+  if (windowStore.isResizing || windowStore.isDragging) return;
+
+  const dock = e.currentTarget as HTMLElement;
+  const dockRect = dock.getBoundingClientRect();
+  const mouseY = e.clientY - dockRect.top;
+
+  const targetWidths = dockRef.value.map((dockItemEl) => {
+    const rect = dockItemEl.getBoundingClientRect();
+    const centerY = rect.top + rect.height / 2 - dockRect.top; // 아이콘 중앙 좌표
+    const distance = Math.abs(centerY - mouseY); // 마우스와 아이콘 중앙 좌표 사이의 거리
+
+    // 거리에 따라 아이콘 크기 조절
+    // 거리가 0일 때 최대 크기, MAX_DISTANCE일 때 기본 크기가 되도록 선형 보간
+    const ratio = Math.max(0, 1 - distance / MAX_DISTANCE);
+    return BASE_WIDTH + (MAX_WIDTH - BASE_WIDTH) * ratio;
+  });
+
+  updateWidths(targetWidths);
+};
+
+/**
+ * 마우스가 독을 벗어날 때 모든 아이콘을 기본 크기로 복원
+ */
+const onMouseLeave = (): void => {
+  updateWidths(Array(widths.value.length).fill(BASE_WIDTH));
+};
+</script>
+
+<style lang="scss">
+.dock {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 1rem;
+  box-sizing: content-box;
+  transform: translateY(-50%);
+  z-index: 100000;
+  background-color: var(--dock-bg);
+  box-shadow: 1px 1px 4px #888;
+  border-radius: 1.4rem;
+  padding: 1.2rem 0.6rem;
+  cursor: default;
+  transition: background-color 0.3s ease;
+
+  .dock-item {
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+    padding: 0.6rem 0;
+
+    &:first-child {
+      padding-top: 0;
+    }
+
+    &:last-child {
+      padding-bottom: 0;
+    }
+
+    p {
+      display: none;
+      align-items: center;
+      margin-left: 1.8rem;
+      color: #fff;
+      font-size: 1.6rem;
+      background-color: var(--surface-transparent-100);
+      padding: 0.2em 0.8em;
+      border-radius: 5px;
+      box-shadow: 0 0 1px 1px var(--on-surface-100);
+      color: var(--on-surface-100);
+      white-space: nowrap;
+    }
+
+    &.disabled {
+      cursor: none;
+      pointer-events: none;
+    }
+  }
+}
+</style>
