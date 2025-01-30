@@ -109,5 +109,9 @@ const full = () => {
   display: flex;
   flex-direction: column;
   background-color: #555;
+
+  &.fullscreen {
+    border-radius: 0;
+  }
 }
 </style>

@@ -91,28 +91,25 @@ export const useWindowStore = defineStore("window", {
     maximizeWindow(id: number) {
       const w = this.windows.find((w) => w.id === id);
       if (w) {
+        if (w.isFullscreen) return;
+
         const dockRight = getDockRight();
         const headerHeight = getHeaderHeight();
 
         if (!w.isMaximized) {
-          w.backupRect = {
-            x: w.x,
-            y: w.y,
-            width: w.width,
-            height: w.height,
-          };
-
           w.x = dockRight;
           w.y = headerHeight;
           w.width = window.innerWidth - dockRight;
           w.height = window.innerHeight - headerHeight;
           w.isMaximized = true;
+          w.isFullscreen = false;
         } else {
           w.x = w.backupRect.x;
           w.y = w.backupRect.y;
           w.width = w.backupRect.width;
           w.height = w.backupRect.height;
           w.isMaximized = false;
+          w.isFullscreen = false;
         }
       }
     },

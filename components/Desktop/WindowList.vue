@@ -11,6 +11,7 @@
         height: `${window.height}px`,
         zIndex: window.zIndex,
       }"
+      :class="{ fullscreen: window.isFullscreen }"
       :key="window.id"
       @focus="focus"
       @dragStart="dragStart"
