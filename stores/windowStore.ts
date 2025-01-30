@@ -165,6 +165,10 @@ export const useWindowStore = defineStore("window", {
     },
 
     updateWindowPosition(id: number, x: number, y: number) {
+      if (y < getHeaderHeight()) {
+        y = getHeaderHeight();
+      }
+
       this.windows = this.windows.map((w) =>
         w.id === id
           ? {
@@ -216,6 +220,10 @@ export const useWindowStore = defineStore("window", {
       let newY = currY;
       let newHeight = currHeight;
       let newWidth = currWidth;
+
+      if (mouseY < getHeaderHeight()) {
+        mouseY = getHeaderHeight();
+      }
 
       switch (direction) {
         case "top":
