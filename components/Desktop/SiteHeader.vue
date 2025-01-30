@@ -4,7 +4,7 @@
       <div class="logo">
         <Logo />
       </div>
-      <div class="title">Blog Creator</div>
+      <div class="title">{{ currentWindowTitle }}</div>
     </div>
     <div class="site-header__right">
       <ThemeButton />
@@ -17,6 +17,11 @@
 import Clock from "./SiteHeader/Clock.vue";
 import ThemeButton from "./SiteHeader/ThemeButton.vue";
 import Logo from "@/assets/images/logo.svg?component";
+
+import { useWindowStore } from "@/stores/windowStore";
+
+const windowStore = useWindowStore();
+const currentWindowTitle = computed(() => windowStore.currentWindowTitle());
 </script>
 
 <style lang="scss">

@@ -7,16 +7,15 @@
       "
       @resize-leave="() => $emit('resizeLeave', id)"
     />
-    <div
-      class="window-header"
-      @mousedown="dragStart"
-      :style="{ height: `${headerHeight}px` }"
-    >
-      <div class="close-button" @click="close">X</div>
-      <div class="minimize-button" @click="minimize">-</div>
-      <div class="maximize-button" @click="maximize">+</div>
-    </div>
-    <component :is="comp" />
+    <WindowHeader
+      :headerHeight="headerHeight"
+      @dragStart="dragStart"
+      @close="close"
+      @minimize="minimize"
+      @maximize="maximize"
+    />
+
+    <component :is="comp" :headerHeight="headerHeight" />
   </div>
 </template>
 
@@ -24,6 +23,7 @@
 import { defineAsyncComponent } from "vue";
 import { useWindowStore } from "@/stores/windowStore";
 import ResizeObserver from "./Window/ResizeObserver.vue";
+import WindowHeader from "./Window/WindowHeader.vue";
 
 const windowStore = useWindowStore();
 
@@ -82,12 +82,6 @@ const maximize = () => {
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-
-  .window-header {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    background: var(--surface-200);
-  }
+  background-color: #555;
 }
 </style>

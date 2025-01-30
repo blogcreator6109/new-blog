@@ -9,6 +9,7 @@
         transform: `translate(${window.x}px, ${window.y}px)`,
         width: `${window.width}px`,
         height: `${window.height}px`,
+        zIndex: window.zIndex,
       }"
       :key="window.id"
       @focus="focus"
@@ -74,6 +75,12 @@ const resizeHover = (direction: string) => {
   }
 };
 
+const onMouseDown = (e: MouseEvent) => {
+  if (currentWindow.value === null) {
+    windowStore.currentWindowId = null;
+  }
+};
+
 const onMouseUp = (e: MouseEvent) => {
   dragEnd();
   resizeEnd();
@@ -103,11 +110,13 @@ const onMouseMove = (e: MouseEvent) => {
 };
 
 onMounted(() => {
+  window.addEventListener("mousedown", onMouseDown);
   window.addEventListener("mousemove", onMouseMove);
   window.addEventListener("mouseup", onMouseUp);
 });
 
 onUnmounted(() => {
+  window.removeEventListener("mousedown", onMouseDown);
   window.removeEventListener("mousemove", onMouseMove);
   window.removeEventListener("mouseup", onMouseUp);
 });

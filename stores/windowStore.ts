@@ -10,6 +10,7 @@ export interface AppWindow {
   y: number;
   width: number;
   height: number;
+  isMinimized: boolean;
 }
 
 export const useWindowStore = defineStore("window", {
@@ -17,6 +18,7 @@ export const useWindowStore = defineStore("window", {
     windows: [] as AppWindow[],
     isResizing: false,
     isDragging: false,
+    currentWindowId: null as number | null,
   }),
 
   getters: {
@@ -24,6 +26,13 @@ export const useWindowStore = defineStore("window", {
       state.windows.some((w) => w.component === component),
     getWindowById: (state) => (id: number) =>
       state.windows.find((w) => w.id === id) || null,
+
+    currentWindowTitle: (state) => () => {
+      return (
+        state.windows.find((w) => w.id === state.currentWindowId)?.title ||
+        "Blog Creator"
+      );
+    },
   },
 
   actions: {
@@ -35,13 +44,15 @@ export const useWindowStore = defineStore("window", {
           id: Date.now(),
           title,
           component,
-          zIndex: this.windows.length,
-          headerHeight: 30,
+          isMinimized: false,
+          zIndex: this.windows.length + 1,
+          headerHeight: 40,
           x: 100,
           y: 100,
           width: 800,
           height: 600,
         });
+        this.currentWindowId = this.windows[this.windows.length - 1].id;
       }
     },
 
@@ -52,14 +63,19 @@ export const useWindowStore = defineStore("window", {
     focusWindow(component: string) {
       const windowId = this.windows.find((w) => w.component === component)?.id;
       if (windowId) {
-        this.updateWindowZIndex(windowId, this.windows.length);
+        this.toTopZIndex(windowId);
+        this.currentWindowId = windowId;
       }
     },
 
-    updateWindowZIndex(id: number, zIndex: number) {
-      this.windows = this.windows.map((w) =>
-        w.id === id ? { ...w, zIndex } : w
-      );
+    toTopZIndex(id: number) {
+      for (let i = 0; i < this.windows.length; i++) {
+        if (this.windows[i].id === id) {
+          this.windows[i].zIndex = this.windows.length - 1;
+        } else {
+          this.windows[i].zIndex -= 1;
+        }
+      }
     },
 
     updateWindowPosition(id: number, x: number, y: number) {
