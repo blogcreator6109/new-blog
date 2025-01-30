@@ -15,4 +15,9 @@ const deviceComponent = computed(() =>
 );
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+@use "@/assets/scss/base/reset.scss" as *;
+@use "@/assets/scss/base/variables.scss" as *;
+@use "@/assets/scss/base/font.scss" as *;
+@use "@/assets/scss/base/base.scss" as *;
+</style>

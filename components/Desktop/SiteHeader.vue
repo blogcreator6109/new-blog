@@ -25,6 +25,8 @@ const currentWindowTitle = computed(() => windowStore.currentWindowTitle());
 </script>
 
 <style lang="scss">
+@use "@/assets/scss/base/variables.scss" as *;
+
 .site-header {
   background-color: var(--header-bg);
   height: $header-height;

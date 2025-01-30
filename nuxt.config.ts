@@ -29,18 +29,6 @@ export default defineNuxtConfig({
         images: fileURLToPath(new URL("./assets/images", import.meta.url)),
       },
     },
-    css: {
-      preprocessorOptions: {
-        scss: {
-          additionalData: `
-          @use "@/assets/scss/base/reset.scss" as *;
-          @use "@/assets/scss/base/font.scss" as *;
-          @use "@/assets/scss/base/variables.scss" as *;
-          @use "@/assets/scss/base/base.scss" as *;
-          `,
-        },
-      },
-    },
   },
 
   app: {

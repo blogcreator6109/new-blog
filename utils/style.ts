@@ -8,11 +8,12 @@ export const getDockRight = (): number => {
 };
 
 export const getHeaderHeight = (): number => {
-  return parseInt(
-    getComputedStyle(document.documentElement).getPropertyValue(
-      "--header-height"
-    )
-  );
+  const header = document.querySelector(".header");
+  if (header) {
+    const rect = header.getBoundingClientRect();
+    return rect.height;
+  }
+  return 0;
 };
 
 export const setCursor = (direction: string | null) => {

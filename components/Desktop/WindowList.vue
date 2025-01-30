@@ -124,6 +124,8 @@ onUnmounted(() => {
 </script>
 
 <style lang="scss">
+@use "@/assets/scss/base/variables.scss" as *;
+
 .window-list {
   position: fixed;
   top: $header-height;
