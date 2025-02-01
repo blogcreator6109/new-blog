@@ -2,6 +2,7 @@
   <div class="mobile-container">
     <BackgroundImage />
     <AppIconList />
+    <WindowList />
   </div>
 </template>
 

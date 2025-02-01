@@ -78,10 +78,8 @@ export const useWindowStore = defineStore("window", {
 
     setIsMaximizing() {
       this.isMaximizing = true;
-      console.log("setIsMaximizing");
       setTimeout(() => {
         this.isMaximizing = false;
-        console.log("setIsMaximizing false");
       }, this.animationTime * 1000);
     },
 

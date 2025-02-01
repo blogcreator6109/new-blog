@@ -11,22 +11,22 @@
   >
     <button
       class="dock-item"
-      v-for="(name, i) in docNames"
-      :key="i"
+      v-for="(app, i) in appList"
+      :key="app.name"
       :class="{
-        active: windowStore.windows.some((window) => window.title === name),
+        active: windowStore.windows.some((window) => window.title === app.name),
       }"
-      @click="openApp(name, i)"
+      @click="openApp(app.name, i)"
     >
       <img
         :style="{ minWidth: widths[i] + 'px' }"
-        :src="`/images/dock/${name}.webp`"
+        :src="app.src"
         ref="dockRef"
-        :alt="name"
+        :alt="app.name"
         width="60"
       />
 
-      <p>{{ name }}</p>
+      <p>{{ app.name }}</p>
     </button>
   </nav>
 </template>
@@ -44,20 +44,23 @@ const openApp = (name: string, i: number) => {
 };
 
 // 앱 아이콘 목록 (Window 폴더에서 가져오기)
-const files = import.meta.glob(
-  "@/components/Desktop/WindowList/WindowItems/*.vue"
-);
-const docNames = Object.keys(files).map((key) => {
-  const fileName = key.split("/").pop();
-  if (!fileName) {
+const files = import.meta.glob("@/public/images/dock/*");
+
+const appList = Object.keys(files).map((key) => {
+  // 파일 이름 추출
+  const name = key.split("/").pop()?.split(".")[0];
+  if (!name) {
     console.error("파일 이름을 찾을 수 없습니다.", key);
-    return "";
+    return {
+      name: "",
+      src: "",
+    };
   }
 
-  return fileName
-    .replace(".vue", "")
-    .split(/(?=[A-Z])/)
-    .join(" ");
+  return {
+    name,
+    src: key.replace("/public", ""),
+  };
 });
 
 // 독 설정 상수
@@ -67,7 +70,7 @@ const ANIMATION_SPEED = 0.07; // 애니메이션 속도
 const MAX_DISTANCE = 250; // 마우스 영향을 받는 최대 거리
 
 const dockRef = ref<HTMLImageElement[]>([]);
-const widths = ref<number[]>(Array(docNames.length).fill(BASE_WIDTH));
+const widths = ref<number[]>(Array(appList.length).fill(BASE_WIDTH));
 let animationFrameId: number | null = null;
 
 /**
@@ -144,7 +147,6 @@ const onMouseLeave = (): void => {
   background-color: var(--dock-bg);
   backdrop-filter: blur(10px);
   box-shadow: 2px 2px 4px 4px var(--dock-shadow);
-  border-radius: 1.4rem;
 
   $padding-left: 1.1rem;
   padding: 0.8rem calc($padding-left * 2 / 3) 0.8rem $padding-left;

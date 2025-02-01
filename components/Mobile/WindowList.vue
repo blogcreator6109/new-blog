@@ -1,6 +1,12 @@
 <template>
   <div class="window-list">
-    <Window v-for="window in windows" :key="window.id"></Window>
+    <Window
+      v-for="window in windows"
+      :key="window.id"
+      :id="window.id"
+      :component="window.component"
+      :dockIndex="window.dockIndex"
+    />
   </div>
 </template>
 
@@ -12,4 +18,8 @@ const windowStore = useWindowStore();
 const windows = computed(() => windowStore.windows);
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.window-list {
+  position: relative;
+}
+</style>
