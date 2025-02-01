@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-const isMobile = useState("isMobile");
+const { isMobile } = useDevice();
 
 // 동적으로 컴포넌트 임포트
 const deviceComponent = computed(() =>

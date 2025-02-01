@@ -195,14 +195,20 @@ const onMouseLeave = (): void => {
       display: none;
       align-items: center;
       margin-left: 1.8rem;
-      color: #fff;
       font-size: 1.6rem;
-      background-color: var(--surface-transparent-100);
+      background-color: var(--window-bg-200);
       padding: 0.2em 0.8em;
       border-radius: 5px;
-      box-shadow: 0 0 1px 1px var(--on-surface-100);
-      color: var(--on-surface-100);
+      border: 1px solid var(--window-border);
+      box-shadow: 0 0 1px 1px var(--dock-bg);
+      color: var(--text-color-100);
       white-space: nowrap;
+    }
+
+    &:hover {
+      p {
+        display: block;
+      }
     }
   }
 }
