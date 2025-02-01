@@ -1,75 +1,9 @@
-# Nuxt Minimal Starter
+# Blogcreator 블로그 프로젝트
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## 목표
 
-## Setup
-
-Make sure to install dependencies:
-
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
-```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+- 2025년 3월 말까지 기존 블로그보다 개선된 형태로 제작
+  - Desktop과 Mobile 형태 명확히 구분
+  - Theme 적용 (Dark, Light)
+  - 상단 헤더 메뉴바 구현
+  - 각 앱 디자인 개선
