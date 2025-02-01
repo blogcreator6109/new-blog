@@ -6,6 +6,8 @@
       :component="window.component"
       :headerHeight="window.headerHeight"
       :minimized="window.isMinimized"
+      :maximized="window.isMaximized"
+      :fullscreen="window.isFullscreen"
       :style="{
         transform: `translate(${window.x}px, ${window.y}px)`,
         width: `${window.width}px`,

@@ -3,8 +3,6 @@
     class="window"
     @mousedown="focus"
     :class="{
-      minimizing: windowStore.isMinimizing,
-      maximizing: windowStore.isMaximizing,
       focused: windowStore.isFocusedWindow(props.component),
       minimized: minimized,
     }"
@@ -12,17 +10,17 @@
       transition:
         windowStore.isMaximizing || windowStore.isMinimizing
           ? [
-              `height ${windowStore.animationTime}s ease`,
-              `width ${windowStore.animationTime}s ease`,
-              `transform ${windowStore.animationTime}s ease`,
+              'all ' + windowStore.animationTime + 's ease',
               !props.minimized
                 ? windowStore.isMinimizing
-                  ? `opacity ${windowStore.animationTime / 3}s ease-in`
+                  ? 'opacity ' + windowStore.animationTime / 3 + 's ease-in'
                   : ''
                 : windowStore.isMinimizing
-                ? `opacity ${windowStore.animationTime * 3}s ease-out`
+                ? 'opacity ' + windowStore.animationTime * 3 + 's ease-out'
                 : 'none',
-            ].join(', ')
+            ]
+              .filter(Boolean)
+              .join(', ')
           : 'none',
     }"
   >
@@ -59,6 +57,8 @@ const props = defineProps<{
   component: string;
   headerHeight: number;
   minimized: boolean;
+  maximized: boolean;
+  fullscreen: boolean;
 }>();
 
 const emit = defineEmits([
@@ -84,7 +84,9 @@ const focus = () => {
 };
 
 const dragStart = (e: MouseEvent) => {
-  emit("dragStart", e, props.id);
+  if (!props.fullscreen) {
+    emit("dragStart", e, props.id);
+  }
 };
 
 const close = () => {
@@ -92,20 +94,20 @@ const close = () => {
 };
 
 const minimize = () => {
-  windowStore.minimizeWindow(props.id);
   windowStore.setIsMinimizing();
+  windowStore.minimizeWindow(props.id);
 };
 
 const maximize = () => {
-  if (!windowStore.isMaximizing) {
-    windowStore.maximizeWindow(props.id);
+  if (!props.fullscreen) {
     windowStore.setIsMaximizing();
+    windowStore.maximizeWindow(props.id);
   }
 };
 
 const full = () => {
-  windowStore.fullWindow(props.id);
   windowStore.setIsMaximizing();
+  windowStore.fullWindow(props.id);
 };
 </script>
 
