@@ -8,7 +8,7 @@ export const getDockRight = (): number => {
 };
 
 export const getHeaderHeight = (): number => {
-  const header = document.querySelector(".header");
+  const header = document.querySelector(".site-header");
   if (header) {
     const rect = header.getBoundingClientRect();
     return rect.height;

@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { getHeaderHeight } from "@/utils/style";
 
 export interface AppWindow {
   id: number;
@@ -13,6 +14,9 @@ export interface AppWindow {
   height: number;
   zIndex: number;
 
+  minWidth: number;
+  minHeight: number;
+
   isMinimized: boolean;
   isMaximized: boolean;
   isFullscreen: boolean;
@@ -23,6 +27,7 @@ export interface AppWindow {
     width: number;
     height: number;
   };
+  dockIndex: number;
 }
 
 export const useWindowStore = defineStore("window", {
@@ -31,11 +36,20 @@ export const useWindowStore = defineStore("window", {
     isResizing: false,
     isDragging: false,
     currentWindowId: null as number | null,
+
+    // Resize 시 minWidth, minHeight 넘어갈 경우 이전 위치 기억
+    lastY: 0,
+    lastX: 0,
   }),
 
   getters: {
     isWindowOpen: (state) => (component: string) =>
       state.windows.some((w) => w.component === component),
+    isFocusedWindow: (state) => (component: string) =>
+      // 인덱스 가장 높은 윈도우가 포커스된 상태
+      state.windows.findIndex((w) => w.component === component) ===
+      state.windows.length - 1,
+
     getWindowById: (state) => (id: number) =>
       state.windows.find((w) => w.id === id) || null,
 
@@ -51,7 +65,7 @@ export const useWindowStore = defineStore("window", {
   },
 
   actions: {
-    openWindow(title: string, component: string) {
+    openWindow(title: string, component: string, dockIndex: number) {
       if (this.isWindowOpen(component)) {
         this.focusWindow(component);
       } else {
@@ -59,11 +73,14 @@ export const useWindowStore = defineStore("window", {
         const y = 100;
         const width = 800;
         const height = 600;
+        const minWidth = 300;
+        const minHeight = 200;
 
         this.windows.push({
           id: Date.now(),
           title,
           component,
+          dockIndex,
           isMinimized: false,
           isMaximized: false,
           isFullscreen: false,
@@ -73,6 +90,8 @@ export const useWindowStore = defineStore("window", {
           y,
           width,
           height,
+          minWidth,
+          minHeight,
           backupRect: {
             x,
             y,
@@ -86,6 +105,18 @@ export const useWindowStore = defineStore("window", {
 
     closeWindow(id: number) {
       this.windows = this.windows.filter((w) => w.id !== id);
+    },
+
+    minimizeWindow(id: number) {
+      const w = this.windows.find((w) => w.id === id);
+      if (w) {
+        if (w.isMinimized) {
+          w.isMinimized = false;
+          // 지니 효과로 Dock 있는 곳으로 줄어들게 하기
+        } else {
+          w.isMinimized = true;
+        }
+      }
     },
 
     maximizeWindow(id: number) {
@@ -213,53 +244,57 @@ export const useWindowStore = defineStore("window", {
       mouseX: number,
       mouseY: number
     ) {
+      const w = this.windows.find((w) => w.id === id);
+      if (!w) return;
+
+      // 헤더 높이 제한
+      mouseY = Math.max(mouseY, getHeaderHeight());
+
       let newX = currX;
       let newY = currY;
-      let newHeight = currHeight;
       let newWidth = currWidth;
-
-      if (mouseY < getHeaderHeight()) {
-        mouseY = getHeaderHeight();
-      }
+      let newHeight = currHeight;
 
       switch (direction) {
         case "top":
-          newY = mouseY;
-          newHeight = currHeight - (mouseY - currY);
+          const deltaY = mouseY - currY;
+          newHeight = Math.max(w.minHeight, currHeight - deltaY);
+          newY = currY + (currHeight - newHeight);
           break;
         case "bottom":
-          newHeight = mouseY - currY;
+          newHeight = Math.max(w.minHeight, mouseY - currY);
           break;
         case "left":
-          newX = mouseX;
-          newWidth = currWidth - (mouseX - currX);
+          const deltaX = mouseX - currX;
+          newWidth = Math.max(w.minWidth, currWidth - deltaX);
+          newX = currX + (currWidth - newWidth);
           break;
         case "right":
-          newWidth = mouseX - currX;
+          newWidth = Math.max(w.minWidth, mouseX - currX);
           break;
         case "top-left":
-          newX = mouseX;
-          newY = mouseY;
-          newWidth = currWidth - (mouseX - currX);
-          newHeight = currHeight - (mouseY - currY);
+          const deltaYTL = mouseY - currY;
+          const deltaXTL = mouseX - currX;
+          newHeight = Math.max(w.minHeight, currHeight - deltaYTL);
+          newWidth = Math.max(w.minWidth, currWidth - deltaXTL);
+          newY = currY + (currHeight - newHeight);
+          newX = currX + (currWidth - newWidth);
           break;
         case "top-right":
-          newWidth = mouseX - currX;
-          newHeight = currY + currHeight - mouseY;
-          newX = mouseX - newWidth;
-          newY = mouseY;
+          const deltaYTR = mouseY - currY;
+          newHeight = Math.max(w.minHeight, currHeight - deltaYTR);
+          newWidth = Math.max(w.minWidth, mouseX - currX);
+          newY = currY + (currHeight - newHeight);
           break;
         case "bottom-left":
-          newWidth = currWidth - (mouseX - currX);
-          newHeight = mouseY - currY;
-          newX = mouseX;
-          newY = mouseY - newHeight;
+          const deltaXBL = mouseX - currX;
+          newHeight = Math.max(w.minHeight, mouseY - currY);
+          newWidth = Math.max(w.minWidth, currWidth - deltaXBL);
+          newX = currX + (currWidth - newWidth);
           break;
         case "bottom-right":
-          newWidth = mouseX - currX;
-          newHeight = mouseY - currY;
-          newX = mouseX - newWidth;
-          newY = mouseY - newHeight;
+          newHeight = Math.max(w.minHeight, mouseY - currY);
+          newWidth = Math.max(w.minWidth, mouseX - currX);
           break;
       }
 

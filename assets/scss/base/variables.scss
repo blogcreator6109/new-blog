@@ -1,19 +1,45 @@
-$header-height: 35px;
+$header-height: 27px;
 
 // Light Theme Colors
 $light-colors: (
-  dock-bg: #3333339c,
-  body-bg: #ccc,
-  header-bg: #eee,
-  text-color-100: #333,
+  body-bg: #999,
+  header-bg: #ddddddd9,
+
+  text-color-100: #222,
+
+  window-bg-100: #ffffff,
+  window-bg-200: #f3f3f2,
+  window-bg-300: #e0e0dfc9,
+  window-bg-400: #f8f8f7,
+  window-bg-500: #f0f0ef,
+
+  window-border: #adadad,
+  window-shadow: rgba(0, 0, 0, 0.3),
+  dock-bg: rgba(255, 255, 255, 0.25),
+  dock-border: rgba(255, 255, 255, 0.1),
+  dock-shadow: rgba(0, 0, 0, 0.1),
+  dock-active-bg: #222,
 );
 
 // Dark Theme Colors
 $dark-colors: (
-  dock-bg: #eeeeee9c,
-  body-bg: #333,
-  header-bg: #222,
+  body-bg: #aaa,
+  header-bg: #222222c9,
+
   text-color-100: #fff,
+
+  window-bg-100: #191919,
+  window-bg-200: #202020,
+  window-bg-300: #2a2a2ac9,
+  window-bg-400: #202020,
+  window-bg-500: #2c2c2c,
+
+  window-border: #464543,
+  window-shadow: rgba(0, 0, 0, 0.3),
+  dock-bg: rgba(0, 0, 0, 0.1),
+  dock-border: rgba(255, 255, 255, 0.1),
+  dock-shadow: rgba(0, 0, 0, 0.1),
+  dock-active-bg: #bbb,
 );
 
 // Theme Mixin

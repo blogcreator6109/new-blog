@@ -28,14 +28,15 @@ const currentWindowTitle = computed(() => windowStore.currentWindowTitle());
 @use "@/assets/scss/base/variables.scss" as *;
 
 .site-header {
-  background-color: var(--header-bg);
   height: $header-height;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.8rem 2rem;
+  padding: 0rem 2rem;
   font-size: 1.4rem;
   transition: background-color 0.3s ease;
+  background-color: var(--header-bg);
+  backdrop-filter: blur(10px);
 
   &__left {
     display: flex;
@@ -43,7 +44,7 @@ const currentWindowTitle = computed(() => windowStore.currentWindowTitle());
     height: 100%;
 
     .logo {
-      height: 80%;
+      height: 60%;
       svg {
         height: 100%;
         .path {

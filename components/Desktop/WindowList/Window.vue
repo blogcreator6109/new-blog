@@ -2,10 +2,15 @@
   <div
     class="window"
     @mousedown="focus"
-    :class="{ maximizing: isMaximizing }"
+    :class="{
+      maximizing: isMaximizing,
+      focused: windowStore.isFocusedWindow(props.component),
+    }"
     :style="{
       transition: isMaximizing ? `all ${maximizingTime}s ease` : 'none',
+      display: isMinimized ? 'none' : 'flex',
     }"
+    :data-window-id="id"
   >
     <ResizeObserver
       @resize-hover="(direction) => $emit('resizeHover', direction)"
@@ -76,7 +81,7 @@ const close = () => {
 };
 
 const minimize = () => {
-  // windowStore.minimizeWindow(props.id);
+  windowStore.minimizeWindow(props.id);
 };
 
 const maximize = () => {
@@ -103,12 +108,12 @@ const full = () => {
   position: fixed;
   left: 0;
   top: 0;
-  background-color: var(--surface-100);
+  background-color: var(--window-bg-200);
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 6px 8px 40px 30px var(--window-shadow);
+  border: 1px solid var(--window-border);
   display: flex;
   flex-direction: column;
-  background-color: #555;
 
   &.fullscreen {
     border-radius: 0;

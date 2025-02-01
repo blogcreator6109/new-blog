@@ -13,7 +13,10 @@
       class="dock-item"
       v-for="(name, i) in docNames"
       :key="i"
-      @click="openApp(name)"
+      :class="{
+        active: windowStore.windows.some((window) => window.title === name),
+      }"
+      @click="openApp(name, i)"
     >
       <img
         :style="{ minWidth: widths[i] + 'px' }"
@@ -33,10 +36,10 @@ import { useWindowStore } from "@/stores/windowStore";
 
 const windowStore = useWindowStore();
 
-const openApp = (name: string) => {
+const openApp = (name: string, i: number) => {
   const appName = name.replaceAll(" ", "");
 
-  windowStore.openWindow(name, appName);
+  windowStore.openWindow(name, appName, i);
 };
 
 // 앱 아이콘 목록 (Window 폴더에서 가져오기)
@@ -138,11 +141,15 @@ const onMouseLeave = (): void => {
   transform: translateY(-50%);
   z-index: 100000;
   background-color: var(--dock-bg);
-  box-shadow: 1px 1px 4px #888;
+  backdrop-filter: blur(10px);
+  box-shadow: 2px 2px 4px 4px var(--dock-shadow);
   border-radius: 1.4rem;
-  padding: 1.2rem 0.6rem;
+
+  $padding-left: 1.1rem;
+  padding: 0.8rem calc($padding-left * 2 / 3) 0.8rem $padding-left;
   margin-left: 1rem;
   transition: all 0.3s ease;
+  border: 1px solid var(--dock-border);
 
   &.disabled {
     pointer-events: none;
@@ -158,6 +165,22 @@ const onMouseLeave = (): void => {
     align-items: center;
     background-color: transparent;
     padding: 0.6rem 0;
+
+    &.active {
+      position: relative;
+
+      &::before {
+        content: "";
+        position: absolute;
+        left: -$padding-left + 0.2rem;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 4.5px;
+        height: 4.5px;
+        background-color: var(--dock-active-bg);
+        border-radius: 50%;
+      }
+    }
 
     &:first-child {
       padding-top: 0;

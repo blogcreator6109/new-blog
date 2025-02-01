@@ -25,7 +25,7 @@ const toggleTheme = () => {
 <style lang="scss">
 .theme-toggle {
   aspect-ratio: 1;
-  height: 100%;
+  height: 70%;
 
   svg {
     width: 100%;
