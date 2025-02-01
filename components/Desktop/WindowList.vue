@@ -5,6 +5,7 @@
       :id="window.id"
       :component="window.component"
       :headerHeight="window.headerHeight"
+      :minimized="window.isMinimized"
       :style="{
         transform: `translate(${window.x}px, ${window.y}px)`,
         width: `${window.width}px`,

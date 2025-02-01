@@ -37,6 +37,10 @@ export const useWindowStore = defineStore("window", {
     isDragging: false,
     currentWindowId: null as number | null,
 
+    isMinimizing: false,
+    isMaximizing: false,
+    animationTime: 0.5,
+
     // Resize 시 minWidth, minHeight 넘어갈 경우 이전 위치 기억
     lastY: 0,
     lastX: 0,
@@ -65,16 +69,49 @@ export const useWindowStore = defineStore("window", {
   },
 
   actions: {
+    setIsMinimizing() {
+      this.isMinimizing = true;
+      setTimeout(() => {
+        this.isMinimizing = false;
+      }, this.animationTime * 1000);
+    },
+
+    setIsMaximizing() {
+      this.isMaximizing = true;
+      setTimeout(() => {
+        this.isMaximizing = false;
+      }, this.animationTime * 1000);
+    },
+
     openWindow(title: string, component: string, dockIndex: number) {
       if (this.isWindowOpen(component)) {
         this.focusWindow(component);
+
+        const window = this.windows.find((w) => w.component === component);
+        if (window && window.isMinimized) {
+          this.minimizeWindow(window.id);
+        }
       } else {
-        const x = 100;
-        const y = 100;
         const width = 800;
         const height = 600;
         const minWidth = 300;
         const minHeight = 200;
+
+        // Random 한 위치에서 x, y 설정
+        // 가로로는 0에서 innerWidth - width +dock의 오른쪽 까지 랜덤하게 설정
+        // 세로로는 0에서 innerHeight - height + headerHeight 까지 랜덤하게 설정
+        const x = Math.max(
+          getDockRight(),
+          Math.floor(
+            Math.random() * (window.innerWidth - width + getDockRight())
+          )
+        );
+        const y = Math.max(
+          getHeaderHeight(),
+          Math.floor(
+            Math.random() * (window.innerHeight - height + getHeaderHeight())
+          )
+        );
 
         this.windows.push({
           id: Date.now(),
@@ -112,9 +149,28 @@ export const useWindowStore = defineStore("window", {
       if (w) {
         if (w.isMinimized) {
           w.isMinimized = false;
-          // 지니 효과로 Dock 있는 곳으로 줄어들게 하기
+          w.x = w.backupRect.x;
+          w.y = w.backupRect.y;
+          w.width = w.backupRect.width;
+          w.height = w.backupRect.height;
         } else {
           w.isMinimized = true;
+
+          const docks = document.querySelectorAll(".dock-item");
+          const targetDock = docks[w.dockIndex];
+          const targetDockRect = targetDock.getBoundingClientRect();
+
+          w.backupRect = {
+            x: w.x,
+            y: w.y,
+            width: w.width,
+            height: w.height,
+          };
+
+          w.width = targetDockRect.width;
+          w.height = targetDockRect.height;
+          w.x = targetDockRect.x;
+          w.y = targetDockRect.y;
         }
       }
     },
@@ -175,10 +231,10 @@ export const useWindowStore = defineStore("window", {
     },
 
     focusWindow(component: string) {
-      const windowId = this.windows.find((w) => w.component === component)?.id;
-      if (windowId) {
-        this.toTopZIndex(windowId);
-        this.currentWindowId = windowId;
+      const window = this.windows.find((w) => w.component === component);
+      if (window) {
+        this.toTopZIndex(window.id);
+        this.currentWindowId = window.id;
       }
     },
 

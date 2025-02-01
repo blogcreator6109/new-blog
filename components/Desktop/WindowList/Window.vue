@@ -3,14 +3,28 @@
     class="window"
     @mousedown="focus"
     :class="{
-      maximizing: isMaximizing,
+      minimizing: windowStore.isMinimizing,
+      maximizing: windowStore.isMaximizing,
       focused: windowStore.isFocusedWindow(props.component),
+      minimized: minimized,
     }"
     :style="{
-      transition: isMaximizing ? `all ${maximizingTime}s ease` : 'none',
-      display: isMinimized ? 'none' : 'flex',
+      transition:
+        windowStore.isMaximizing || windowStore.isMinimizing
+          ? [
+              `height ${windowStore.animationTime}s ease`,
+              `width ${windowStore.animationTime}s ease`,
+              `transform ${windowStore.animationTime}s ease`,
+              !props.minimized
+                ? windowStore.isMinimizing
+                  ? `opacity ${windowStore.animationTime / 3}s ease-in`
+                  : ''
+                : windowStore.isMinimizing
+                ? `opacity ${windowStore.animationTime * 3}s ease-out`
+                : 'none',
+            ].join(', ')
+          : 'none',
     }"
-    :data-window-id="id"
   >
     <ResizeObserver
       @resize-hover="(direction) => $emit('resizeHover', direction)"
@@ -44,11 +58,8 @@ const props = defineProps<{
   id: number;
   component: string;
   headerHeight: number;
+  minimized: boolean;
 }>();
-
-const isMaximizing = ref(false);
-
-const maximizingTime = ref(0.5);
 
 const emit = defineEmits([
   "focus",
@@ -82,24 +93,19 @@ const close = () => {
 
 const minimize = () => {
   windowStore.minimizeWindow(props.id);
+  windowStore.setIsMinimizing();
 };
 
 const maximize = () => {
-  if (!isMaximizing.value) {
+  if (!windowStore.isMaximizing) {
     windowStore.maximizeWindow(props.id);
-    isMaximizing.value = true;
-    setTimeout(() => {
-      isMaximizing.value = false;
-    }, maximizingTime.value * 1000);
+    windowStore.setIsMaximizing();
   }
 };
 
 const full = () => {
   windowStore.fullWindow(props.id);
-  isMaximizing.value = true;
-  setTimeout(() => {
-    isMaximizing.value = false;
-  }, maximizingTime.value * 1000);
+  windowStore.setIsMaximizing();
 };
 </script>
 
@@ -117,6 +123,11 @@ const full = () => {
 
   &.fullscreen {
     border-radius: 0;
+  }
+
+  &.minimized {
+    opacity: 0;
+    pointer-events: none;
   }
 }
 </style>

@@ -40,6 +40,7 @@ const openApp = (name: string, i: number) => {
   const appName = name.replaceAll(" ", "");
 
   windowStore.openWindow(name, appName, i);
+  windowStore.setIsMinimizing();
 };
 
 // 앱 아이콘 목록 (Window 폴더에서 가져오기)

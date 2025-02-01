@@ -9,18 +9,18 @@
     @dblclick="$emit('maximize')"
   >
     <div class="left">
-      <div class="btn" @click="$emit('close')">
+      <div class="btn" @click.stop="$emit('close')">
         <img src="images/window/mac-close-btn.webp" alt="close" />
         <img src="images/window/mac-close-btn_active.webp" alt="close-active" />
       </div>
-      <div class="btn" @click="$emit('minimize')">
+      <div class="btn" @click.stop="$emit('minimize')">
         <img src="images/window/mac-min-btn.webp" alt="minimize" />
         <img
           src="images/window/mac-min-btn_active.webp"
           alt="minimize-active"
         />
       </div>
-      <div class="btn" @click="$emit('full')">
+      <div class="btn" @click.stop="$emit('full')">
         <img src="images/window/mac-max-btn.webp" alt="maximize" />
         <img
           src="images/window/mac-max-btn_active.webp"
