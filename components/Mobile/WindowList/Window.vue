@@ -43,8 +43,10 @@ const closeWindow = () => {
 
 <style lang="scss">
 .window {
-  position: fixed;
+  position: absolute;
   z-index: 1;
   background-color: rgba(0, 0, 0, 1);
+  width: 100%;
+  height: 100%;
 }
 </style>

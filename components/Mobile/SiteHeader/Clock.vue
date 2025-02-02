@@ -6,11 +6,12 @@
 
 <script setup lang="ts">
 const getTime = () => {
-  return new Date().toLocaleTimeString("en-US", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
+  const time = new Date().toLocaleTimeString("en-US", {
+    hour: "numeric",
+    minute: "numeric",
+    hour12: true,
   });
+  return time.replace(/AM|PM/g, "");
 };
 
 const currentTime = ref(getTime());
@@ -21,9 +22,9 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .clock {
-  font-size: 1.5rem;
+  font-size: max(3.8vw, 1.5rem);
   font-weight: 600;
 }
 </style>
