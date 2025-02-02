@@ -8,12 +8,7 @@
     @mousedown="(e) => $emit('dragStart', e)"
     @dblclick="$emit('maximize')"
   >
-    <div
-      class="left"
-      :class="{
-        minimizing: windowStore.isMinimizing,
-      }"
-    >
+    <div class="left">
       <div class="btn" @click.stop="$emit('close')">
         <img src="images/window/mac-close-btn.webp" alt="close" />
         <img src="images/window/mac-close-btn_active.webp" alt="close-active" />
@@ -61,10 +56,7 @@ const emit = defineEmits(["close", "minimize", "maximize", "dragStart"]);
     display: flex;
     align-items: center;
     column-gap: 7px;
-    transition: all 0.2s;
-    &.minimizing {
-      opacity: 0;
-    }
+
     .btn {
       width: 12px;
       height: 12px;
