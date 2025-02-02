@@ -1,18 +1,17 @@
 <template>
   <div class="app-icon-list">
     <button
-      class="app-icon-item"
       v-for="(app, i) in appList"
       :key="app.name"
+      class="app-icon-item"
+      :style="getPosition(i)"
       @click="openApp(app.name, i)"
-      :class="{
-        hasBg: app.name === 'Youtube',
-        maximizing: maximizingApp === app.name,
-      }"
     >
-      <img class="normal-icon" :src="app.src" alt="App Icon" />
-      <!-- 앱 열릴 때 커지는 모션을 위한 아이콘 -->
-      <img class="animation-icon" :src="app.src" alt="Animation Icon" />
+      <img
+        :src="app.src"
+        alt="App Icon"
+        :class="{ hasBg: ['Youtube'].includes(app.name) }"
+      />
       <span>{{ app.name }}</span>
     </button>
   </div>
@@ -22,75 +21,81 @@
 import { useWindowStore } from "@/stores/windowStore";
 
 const windowStore = useWindowStore();
-const maximizingApp = ref("");
 
 // 앱 아이콘 목록 (Window 폴더에서 가져오기)
 const files = import.meta.glob("@/public/images/dock/*");
+const components = import.meta.glob(
+  "@/components/Mobile/WindowList/WindowItems/*"
+);
 
-const appList = Object.keys(files).map((key) => {
-  const name = key.split("/").pop()?.split(".")[0];
-  if (!name) {
-    console.error("파일 이름을 찾을 수 없습니다.", key);
+const appList = Object.keys(files)
+  .filter((key) => {
+    const name = key.split("/").pop()?.split(".")[0];
+    return Object.keys(components).some((comp) => {
+      const compName = comp.split("/").pop()?.split(".")[0];
+      return compName === name;
+    });
+  })
+  .map((key) => {
+    const name = key.split("/").pop()?.split(".")[0];
+    if (!name) {
+      console.error("파일 이름을 찾을 수 없습니다.", key);
+      return {
+        name: "",
+        src: "",
+      };
+    }
+
     return {
-      name: "",
-      src: "",
+      name,
+      src: key.replace("/public", ""),
     };
-  }
-
-  return {
-    name,
-    src: key.replace("/public", ""),
-  };
-});
+  });
 
 const openApp = (name: string, i: number) => {
   const appName = name.replaceAll(" ", "");
 
   windowStore.openWindow(name, appName, i);
-
-  maximizingApp.value = name;
-  setTimeout(() => {
-    maximizingApp.value = "";
-  }, 1000);
 };
 
-onMounted(() => {
-  document.querySelectorAll(".app-icon-item").forEach((el) => {
-    const img = el.querySelector(".normal-icon") as HTMLImageElement;
-    const animationIcon = el.querySelector(
-      ".animation-icon"
-    ) as HTMLImageElement;
+const getPosition = (index: number) => {
+  const COLUMNS = 4;
+  const ROWS = 6;
+  const PADDING_PERCENT = 6;
 
-    if (!img || !animationIcon) return;
+  const row = Math.floor(index / COLUMNS);
+  const col = index % COLUMNS;
 
-    const rect = img.getBoundingClientRect();
+  const size = "min(15vw, 80px)";
 
-    animationIcon.style.left = `${rect.left}px`;
-    animationIcon.style.top = `${rect.top}px`;
-    animationIcon.style.width = `${rect.width}px`;
-    animationIcon.style.height = `${rect.height}px`;
+  // 전체 너비/높이에서 패딩을 뺀 실제 사용 영역
+  const contentWidth = `(100% - ${PADDING_PERCENT * 2}%)`;
+  const contentHeight = `(100% - ${PADDING_PERCENT * 2}%)`;
 
-    setTimeout(() => {
-      animationIcon.classList.add("ready");
-    }, 10);
-  });
-});
+  // 컬럼/로우 사이의 간격을 포함한 하나의 셀 크기
+  const cellWidth = `(${contentWidth} / ${COLUMNS})`;
+  const cellHeight = `(${contentHeight} / ${ROWS})`;
+
+  return {
+    position: "fixed",
+    left: `calc(${PADDING_PERCENT}% + ${cellWidth} * ${col} - ${size} / 2 + ${cellWidth} / 2)`,
+    top: `calc(${PADDING_PERCENT}% + ${cellHeight} * ${row} - ${size} / 2 + ${cellHeight} / 2)`,
+    width: size,
+    height: size,
+  };
+};
 </script>
 
 <style lang="scss">
 .app-icon-list {
-  display: grid;
-  grid-template-columns: repeat(4, 15%);
-  justify-content: space-evenly;
-  row-gap: 10%;
-  padding: 8% 0;
+  position: fixed;
 
   .app-icon-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.5rem;
-    position: relative;
+
     img {
       width: 100%;
       aspect-ratio: 1;
@@ -101,33 +106,10 @@ onMounted(() => {
       }
     }
 
-    .animation-icon {
-      position: fixed;
-      opacity: 0;
-      &.ready {
-        opacity: 1;
-        transition: top 0.4s ease, left 0.4s ease, width 0.4s ease,
-          height 0.4s ease, opacity 0.3s ease-out;
-      }
-    }
-
-    &.maximizing {
-      z-index: 1;
-      .animation-icon {
-        opacity: 0;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-      }
-    }
-
     span {
-      font-size: max(1.8vw, 1.2rem);
+      font-size: max(1.3vw, 1.1rem);
       color: var(--text-color-100);
       text-align: center;
-      max-width: 100%;
-      overflow: hidden;
       white-space: nowrap;
     }
   }

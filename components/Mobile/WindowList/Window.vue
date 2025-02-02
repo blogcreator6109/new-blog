@@ -1,13 +1,9 @@
 <template>
   <div
     class="window"
-    :style="{
-      left: x,
-      top: y,
-      width,
-      height,
-      opacity,
-    }"
+    :data-window-id="id"
+    @click="closeWindow"
+    v-show="isVisible"
   >
     <component :is="comp" />
   </div>
@@ -15,51 +11,34 @@
 
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
+import { useWindowStore } from "@/stores/windowStore";
+import { ref } from "vue";
+
+const windowStore = useWindowStore();
 
 const props = defineProps<{
+  id: number;
   component: string;
-  dockIndex: number;
 }>();
 
-const x = ref<string | null>(null);
-const y = ref<string | null>(null);
-const width = ref<string | null>(null);
-const height = ref<string | null>(null);
-const opacity = ref<number>(0);
+const isVisible = ref(true);
 
 const comp = computed(() =>
   defineAsyncComponent(
     () =>
       import(
-        // TODO: 모바일에서 사용하는 컴포넌트 경로 수정
-        `@/components/Desktop/WindowList/WindowItems/${props.component}.vue`
+        `@/components/Mobile/WindowList/WindowItems/${props.component}.vue`
       )
   )
 );
 
-onMounted(() => {
-  const dockEl = document.querySelectorAll(".app-icon-item");
-  const dockRect = dockEl[props.dockIndex].getBoundingClientRect();
-
-  const startX = dockRect.left;
-  const startY = dockRect.top;
-  const startWidth = dockRect.width;
-  const startHeight = dockRect.height;
-
-  x.value = startX + "px";
-  y.value = startY + "px";
-  width.value = startWidth + "px";
-  height.value = startHeight + "px";
-  opacity.value = 0;
-
+const closeWindow = () => {
+  isVisible.value = false;
+  // 애니메이션이 끝난 후에 실제로 window를 제거
   setTimeout(() => {
-    x.value = "0px";
-    y.value = "0px";
-    width.value = "100vw";
-    height.value = "100vh";
-    opacity.value = 1;
-  }, 50);
-});
+    windowStore.closeWindow(props.id);
+  }, 300); // gsap duration과 동일하게
+};
 </script>
 
 <style lang="scss">
@@ -67,8 +46,5 @@ onMounted(() => {
   position: fixed;
   z-index: 1;
   background-color: rgba(0, 0, 0, 1);
-
-  transition: top 0.4s ease, left 0.4s ease, width 0.4s ease, height 0.4s ease,
-    opacity 0.1s ease-in;
 }
 </style>

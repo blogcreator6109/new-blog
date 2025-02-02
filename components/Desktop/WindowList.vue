@@ -2,20 +2,15 @@
   <div class="window-list">
     <Window
       v-for="window in windows"
+      :key="window.id"
+      :class="{ fullscreen: window.isFullscreen }"
       :id="window.id"
       :component="window.component"
       :headerHeight="window.headerHeight"
       :minimized="window.isMinimized"
       :maximized="window.isMaximized"
       :fullscreen="window.isFullscreen"
-      :style="{
-        transform: `translate(${window.x}px, ${window.y}px)`,
-        width: `${window.width}px`,
-        height: `${window.height}px`,
-        zIndex: window.zIndex,
-      }"
-      :class="{ fullscreen: window.isFullscreen }"
-      :key="window.id"
+      :style="style(window)"
       @focus="focus"
       @dragStart="dragStart"
       @resizeStart="resizeStart"
@@ -38,6 +33,13 @@ const windows = computed(() => windowStore.windows);
 const startPosition = ref({ x: -1, y: -1 });
 const currentWindow = ref<AppWindow | null>(null);
 const currentDirection = ref<string | null>(null);
+
+const style = (window: AppWindow) => ({
+  transform: `translate(${window.x}px, ${window.y}px)`,
+  width: `${window.width}px`,
+  height: `${window.height}px`,
+  zIndex: window.zIndex,
+});
 
 const focus = (id: number) => {
   currentWindow.value = windowStore.getWindowById(id) as AppWindow | null;
@@ -85,11 +87,6 @@ const onMouseDown = (e: MouseEvent) => {
   }
 };
 
-const onMouseUp = (e: MouseEvent) => {
-  dragEnd();
-  resizeEnd();
-};
-
 const onMouseMove = (e: MouseEvent) => {
   if (currentWindow.value) {
     if (windowStore.isResizing) {
@@ -111,6 +108,10 @@ const onMouseMove = (e: MouseEvent) => {
       );
     }
   }
+};
+const onMouseUp = (e: MouseEvent) => {
+  dragEnd();
+  resizeEnd();
 };
 
 onMounted(() => {

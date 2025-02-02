@@ -4,24 +4,10 @@
     @mousedown="focus"
     :class="{
       focused: windowStore.isFocusedWindow(props.component),
-      minimized: minimized,
+      minimized,
     }"
     :style="{
-      transition:
-        windowStore.isMaximizing || windowStore.isMinimizing
-          ? [
-              'all ' + windowStore.animationTime + 's ease',
-              !props.minimized
-                ? windowStore.isMinimizing
-                  ? 'opacity ' + windowStore.animationTime / 3 + 's ease-in'
-                  : ''
-                : windowStore.isMinimizing
-                ? 'opacity ' + windowStore.animationTime * 3 + 's ease-out'
-                : 'none',
-            ]
-              .filter(Boolean)
-              .join(', ')
-          : 'none',
+      transition: getTransitionStyle(),
     }"
   >
     <ResizeObserver
@@ -108,6 +94,24 @@ const maximize = () => {
 const full = () => {
   windowStore.setIsMaximizing();
   windowStore.fullWindow(props.id);
+};
+
+const getTransitionStyle = () => {
+  if (!windowStore.isMaximizing && !windowStore.isMinimizing) return "none";
+
+  const transitions = [`all ${windowStore.animationTime}s ease`];
+
+  if (props.minimized) {
+    if (windowStore.isMinimizing) {
+      transitions.push(`opacity ${windowStore.animationTime * 3}s ease-out`);
+    } else {
+      transitions.push("none");
+    }
+  } else if (windowStore.isMinimizing) {
+    transitions.push(`opacity ${windowStore.animationTime / 3}s ease-in`);
+  }
+
+  return transitions.filter(Boolean).join(", ");
 };
 </script>
 

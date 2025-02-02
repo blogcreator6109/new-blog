@@ -7,11 +7,9 @@
 <script setup>
 const { isMobile } = useDevice();
 
-// 동적으로 컴포넌트 임포트
-const deviceComponent = computed(() =>
-  isMobile.value
-    ? defineAsyncComponent(() => import("~/components/Mobile.vue"))
-    : defineAsyncComponent(() => import("~/components/Desktop.vue"))
+// 초기에 한 번만 결정되도록 수정
+const deviceComponent = defineAsyncComponent(() =>
+  import(`~/components/${isMobile.value ? "Mobile" : "Desktop"}.vue`)
 );
 </script>
 

@@ -1,6 +1,6 @@
 <template>
-  <div class="book">
-    <h1>Book</h1>
+  <div class="notion">
+    <h1>Notion</h1>
   </div>
 </template>
 
