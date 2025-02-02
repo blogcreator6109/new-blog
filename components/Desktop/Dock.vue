@@ -5,6 +5,7 @@
     :class="{
       disabled: windowStore.isDragging || windowStore.isResizing,
       fullscreen: windowStore.isFullscreen(),
+      active: isActive,
     }"
     @mousemove="onMouseMove"
     @mouseleave="onMouseLeave"
@@ -56,6 +57,12 @@ const MAX_DISTANCE = 250; // 마우스 영향을 받는 최대 거리
 const dockRef = ref<HTMLImageElement[]>([]);
 const widths = ref<number[]>(Array(appList.length).fill(BASE_WIDTH));
 let animationFrameId: number | null = null;
+
+const isActive = computed(() =>
+  appList.some((app) =>
+    windowStore.windows.some((window) => window.title === app.name)
+  )
+);
 
 /**
  * 아이콘 크기를 목표 크기로 부드럽게 변경하는 함수
@@ -133,8 +140,9 @@ const onMouseLeave = (): void => {
   backdrop-filter: blur(10px);
   box-shadow: 2px 2px 4px 4px var(--dock-shadow);
 
-  $padding-left: 1.1rem;
-  padding: 0.8rem calc($padding-left * 2 / 3) 0.8rem $padding-left;
+  $padding-left-active: 1.1rem;
+  $padding-left: calc($padding-left-active * 2 / 3);
+  padding: 0.8rem $padding-left 0.8rem $padding-left;
   margin-left: 1rem;
   transition: all 0.3s ease;
   border: 1px solid var(--dock-border);
@@ -146,6 +154,10 @@ const onMouseLeave = (): void => {
   &.fullscreen {
     transform: translate(-100%, -50%);
     margin-left: -2px;
+  }
+
+  &.active {
+    padding-left: $padding-left-active;
   }
 
   .dock-item {
@@ -160,7 +172,7 @@ const onMouseLeave = (): void => {
       &::before {
         content: "";
         position: absolute;
-        left: -$padding-left + 0.2rem;
+        left: -$padding-left-active + 0.2rem;
         top: 50%;
         transform: translateY(-50%);
         width: 4.5px;
