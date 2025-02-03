@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
       token: process.env.NETLIFY_API_TOKEN,
     });
     if (cached) {
+      console.log("cached", JSON.parse(cached.toString()));
       return JSON.parse(cached.toString());
     }
 
