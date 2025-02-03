@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
 
     const { pageId } = body;
-    const key = "notion-post-content" + pageId;
+    const key = "notion-post-content" + (pageId ? `:${pageId}` : "");
 
     const cached = await getCache(key);
     if (cached) {

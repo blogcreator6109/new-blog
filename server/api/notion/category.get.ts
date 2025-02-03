@@ -2,7 +2,7 @@ import { notion, getCache, setCache, setHeaders } from "./util";
 
 export default defineEventHandler(async (event) => {
   try {
-    const key = "notion-post-category";
+    const key = "notion-post:category";
 
     const cached = await getCache(key);
     if (cached) {

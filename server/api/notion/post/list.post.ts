@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
 
     const { category } = body;
-    const key = "notion-post-list" + (category ? `/${category}` : "");
+    const key = `notion-post-list:${category || "all"}`;
 
     const cached = await getCache(key);
     if (cached) {
