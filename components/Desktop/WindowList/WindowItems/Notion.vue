@@ -1,18 +1,20 @@
 <template>
-  <div class="notion">
-    <div class="notion-sidebar"></div>
-    <div class="notion-main">{{ postList }}</div>
+  <div class="window-notion">
+    <NotionSidebar />
+    <NotionMain />
   </div>
 </template>
 
 <script setup lang="ts">
-import { useNotion } from "@/composables/useNotion";
-
-const { getPostList } = useNotion();
-
-const postList = ref([]);
-
-onMounted(async () => {
-  postList.value = await getPostList("블로그");
-});
+import NotionSidebar from "./Notion/NotionSidebar.vue";
+import NotionMain from "./Notion/NotionMain.vue";
 </script>
+
+<style lang="scss" scoped>
+@use "@/assets/scss/base/variables.scss" as *;
+
+.window-notion {
+  display: flex;
+  height: 100%;
+}
+</style>

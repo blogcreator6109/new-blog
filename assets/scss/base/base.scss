@@ -5,6 +5,7 @@ html {
 }
 
 button {
+  color: inherit;
   border: none;
   outline: none;
   background: none;
@@ -13,4 +14,18 @@ button {
 
 a {
   text-decoration: none;
+}
+
+// 스크롤바 테마에 맞게 설정
+::-webkit-scrollbar {
+  width: 7px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--window-bg-500);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: var(--window-bg-100);
 }

@@ -6,12 +6,14 @@ $light-colors: (
   header-bg: #ddddddd9,
 
   text-color-100: #222,
+  text-color-200: #555,
 
   window-bg-100: #ffffff,
   window-bg-200: #f3f3f2,
   window-bg-300: #e0e0dfc9,
   window-bg-400: #f8f8f7,
   window-bg-500: #f0f0ef,
+  window-bg-600: #e0e0dfc9,
 
   window-border: #adadad,
   window-shadow: rgba(0, 0, 0, 0.3),
@@ -27,14 +29,16 @@ $dark-colors: (
   header-bg: #222222c9,
 
   text-color-100: #fff,
+  text-color-200: #888888,
 
   window-bg-100: #191919,
   window-bg-200: #202020,
   window-bg-300: #2a2a2ac9,
   window-bg-400: #202020,
   window-bg-500: #2c2c2c,
+  window-bg-600: #333333,
 
-  window-border: #464543,
+  window-border: #595959,
   window-shadow: rgba(0, 0, 0, 0.3),
   dock-bg: rgba(0, 0, 0, 0.5),
   dock-border: rgba(255, 255, 255, 0.1),

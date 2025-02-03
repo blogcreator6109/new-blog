@@ -3,7 +3,7 @@
     class="window-header"
     :style="{
       height: `${headerHeight}px`,
-      paddingLeft: `${headerHeight / 3}px`,
+      paddingLeft: `${(headerHeight * 3) / 7}px`,
     }"
     @mousedown="(e) => $emit('dragStart', e)"
     @dblclick="$emit('maximize')"
@@ -55,7 +55,7 @@ const emit = defineEmits(["close", "minimize", "maximize", "dragStart"]);
   .left {
     display: flex;
     align-items: center;
-    column-gap: 7px;
+    column-gap: 8px;
 
     .btn {
       width: 12px;

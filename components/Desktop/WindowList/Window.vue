@@ -26,7 +26,9 @@
       @full="full"
     />
 
-    <component :is="comp" :headerHeight="headerHeight" />
+    <div class="window-content">
+      <component :is="comp" :headerHeight="headerHeight" />
+    </div>
   </div>
 </template>
 
@@ -122,8 +124,8 @@ const getTransitionStyle = () => {
   top: 0;
   background-color: var(--window-bg-200);
   border-radius: 8px;
-  box-shadow: 6px 8px 40px 30px var(--window-shadow);
-  border: 1px solid var(--window-border);
+  box-shadow: 6px 8px 40px 30px var(--window-shadow), 0 0 0 0.5px #222222;
+  border: 1.2px solid var(--window-border);
   display: flex;
   flex-direction: column;
 
@@ -134,6 +136,14 @@ const getTransitionStyle = () => {
   &.minimized {
     opacity: 0;
     pointer-events: none;
+  }
+
+  .window-content {
+    width: 100%;
+    height: 100%;
+
+    border-radius: 8px;
+    overflow: hidden;
   }
 }
 </style>
