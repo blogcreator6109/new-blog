@@ -11,6 +11,8 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@netlify/blobs": "^8.1.0",
+    "@notionhq/client": "^2.2.15",
     "@nuxtjs/color-mode": "^3.5.2",
     "@pinia/nuxt": "^0.9.0",
     "gsap": "^3.12.7",
