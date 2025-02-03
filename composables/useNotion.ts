@@ -1,6 +1,12 @@
 export const useNotion = () => {
-  const getPostList = async () => {
-    const response = await $fetch("/api/notion/post/get.list");
+  const getPostList = async (category: string) => {
+    const response = await $fetch("/api/notion/post/post.list", {
+      method: "POST",
+      body: {
+        category,
+      },
+    });
+    console.log("response", response);
     return response;
   };
 

@@ -1,7 +1,7 @@
 <template>
   <div class="notion">
     <div class="notion-sidebar"></div>
-    <div class="notion-main"></div>
+    <div class="notion-main">{{ postList }}</div>
   </div>
 </template>
 
@@ -10,8 +10,9 @@ import { useNotion } from "@/composables/useNotion";
 
 const { getPostList } = useNotion();
 
+const postList = ref([]);
+
 onMounted(async () => {
-  const postList = await getPostList();
-  console.log(postList);
+  postList.value = await getPostList("블로그");
 });
 </script>
