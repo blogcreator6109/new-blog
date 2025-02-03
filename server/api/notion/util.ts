@@ -4,7 +4,7 @@ import { H3Event, setResponseHeaders } from "h3";
 // 로컬 개발용 메모리 캐시
 const memoryCache = new Map();
 
-const DEBUG = true;
+const DEBUG = false;
 
 export const notion = new Client({
   auth: process.env.NOTION_SECRET_KEY,
